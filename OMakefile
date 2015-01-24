@@ -1,0 +1,8 @@
+SRCS   = main
+TARGET = enum_induced_subtree
+CC     = g++
+
+CXXFLAGS += -g -Wextra -O3 -coverage
+.DEFAULT: $(CXXProgram $(TARGET), $(SRCS))
+
+
