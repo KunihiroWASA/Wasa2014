@@ -1,8 +1,13 @@
 SRCS   = main
 TARGET = enum_induced_subtree
-CC     = g++
+CC     = g++ 
 
-CXXFLAGS += -g -Wextra -O3 -coverage
+CXXFLAGS += -g -Wextra -O3 -std=c++11 -I./include
+LDFLAGS += -L./src
+LIBS     += ./src/libeis
 .DEFAULT: $(CXXProgram $(TARGET), $(SRCS))
 
+.PHONY: clean
+	rm $(TARGET)
 
+.SUBDIRS: src

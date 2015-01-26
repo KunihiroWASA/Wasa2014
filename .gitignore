@@ -1,2 +1,11 @@
 old/*
 old
+OMake*
+!OMakefile
+.omake*
+enum_induced_subtree
+main.*
+!main.cpp
+*.o
+*.a
+hoge
