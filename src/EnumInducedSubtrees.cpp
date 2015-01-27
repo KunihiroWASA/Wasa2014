@@ -132,8 +132,9 @@ void EnumInducedSubtrees::enumerate()
 void EnumInducedSubtrees::rec_enumerate()
 {
 
+    const Vertex* v = CAND.get_head()->get_vertex();
 
-    if (CAND.empty() and rec_depth % 2 == 0) {
+    if (CAND.empty()) {
         ++induced_subtrees_num; 
 
         if (debug_output and !output_differential) {
@@ -142,19 +143,19 @@ void EnumInducedSubtrees::rec_enumerate()
         return;
     }
 
-    const Vertex* v = CAND.get_head()->get_vertex();
     candidate_no_add(v);
 
     if (make_parenthesis) {
         parenthesis.push_back('(');
     }
     if (debug_output and output_differential) {
+        ++rec_depth;
     }
 
-    ++rec_depth;
     rec_enumerate();
 
     if (debug_output and output_differential) {
+        --rec_depth;
     }
     if (make_parenthesis) {
         parenthesis.push_back(')');
@@ -171,12 +172,13 @@ void EnumInducedSubtrees::rec_enumerate()
     }
     if (debug_output and output_differential) {
         std::cout << std::setw(rec_depth + 3) << std::setfill(' ') << v->get_id() << std::endl;
+        ++rec_depth;
     }
 
     rec_enumerate();
-    --rec_depth;
 
     if (debug_output and output_differential) {
+        --rec_depth;
         std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
                   << v->get_id() << std::endl;
     }
