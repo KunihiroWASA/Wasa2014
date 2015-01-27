@@ -33,10 +33,15 @@ CandidateList::CandidateList() : size(0), head_tail(new CandItem(nullptr)){};
 
 void CandidateList::set_head(CandItem* v_item)
 {
-    head_tail->set_next(v_item);
-    head_tail->set_prev(v_item);
-    v_item->set_next(head_tail.get());
-    v_item->set_prev(head_tail.get());
+    if (empty()) {
+        head_tail->set_next(v_item);
+        head_tail->set_prev(v_item);
+        v_item->set_next(head_tail.get());
+        v_item->set_prev(head_tail.get());
+    } else {
+        std::cerr << "ERROR (1)" << std::endl; 
+        exit(1); 
+    }
 }
 
 CandItem* CandidateList::get_head()
@@ -72,20 +77,21 @@ void CandidateList::merge(std::vector<CandItem*>& addible_cand_items)
     size_t aci_size = addible_cand_items.size();
     CandItem* c = get_head();
     CandItem* ht_p = head_tail.get();
+
     while (c != ht_p and i < aci_size) {
         CandItem* d = addible_cand_items.at(i);
+
         if ((d->get_vertex())->get_degeneracy_id() <
             c->get_vertex()->get_degeneracy_id()) {
-            CandItem* e = c->get_prev();
+            CandItem* c_prev = c->get_prev();
+
+            c_prev->set_next(d);
+            d->set_prev(c_prev);
 
             d->set_next(c);
-            d->set_prev(e);
-
             c->set_prev(d);
-            e->set_next(d);
             ++i;
-        }
-        else {
+        } else {
             c = c->get_next();
         }
     }

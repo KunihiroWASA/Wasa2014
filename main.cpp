@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <boost/program_options.hpp>
 
 
 #include "Graph.hpp"
@@ -15,22 +16,62 @@ std::vector<std::string> split(const std::string& s, char delim);
 
 int main(int argc, char const* argv[])
 {
-    std::unique_ptr<Graph> g(new Graph());
-    if (argc == 2) {
-        std::string file_path(argv[1]); 
-        make_graph_from_file(g.get(), file_path); 
-    } else {
-    // make_petersen_graph(g.get());
-        make_k4_graph(g.get());
+    boost::program_options::options_description opt("Options");
+    opt.add_options()
+        ("help,h",         "display help")
+        ("file,f",         boost::program_options::value<std::string>(), "file path")
+        ("parenthesis,p",   "make parenthesis")
+        ("output,o",        "output")
+        ("differential,d",  "output by differential");
+    boost::program_options::variables_map vm;
+    try {
+        boost::program_options::store(boost::program_options::parse_command_line(argc, argv, opt), vm);
+    } catch(const boost::program_options::error_with_option_name& e) {
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
+    boost::program_options::notify(vm);
+ 
+    if (vm.count("help")) {
+        std::cout << opt << std::endl;
+        return 0; 
     }
 
+    std::unique_ptr<Graph> g(new Graph());
+
+    if (vm.count("file")) {
+        std::string file_path = vm["file"].as<std::string>(); 
+        make_graph_from_file(g.get(), file_path); 
+    } else {
+        make_petersen_graph(g.get());
+    }
 
     EnumInducedSubtrees eis;
 
-    eis.set_make_parenthesis(false); 
-    eis.set_debug_output(true); 
-    eis.set_output_differential(true); 
+    if (vm.count("output")) {
+        eis.set_debug_output(true); 
+    } else {
+        eis.set_debug_output(false); 
+    }
+
+    if (vm.count("differential")) {
+        eis.set_output_differential(true); 
+    } else {
+        eis.set_output_differential(false); 
+    }
+
+    if (vm.count("parenthesis")) {
+        eis.set_make_parenthesis(true); 
+    } else {
+        eis.set_make_parenthesis(false); 
+    }
+
     eis.init_graph(g.get());
+
+    eis.show_graph(); 
+    std::cout << "The degeneracy of the input graph: " << g->get_degeneracy() << std::endl; 
+    std::cout << std::endl; 
+
     eis.enumerate();
     return 0;
 }
@@ -49,7 +90,6 @@ void make_graph_from_file(Graph * g, std::string& file_path)
     std::cout << "OPEN: " << file_path << std::endl; 
 
     while (getline(ifs, str)) {
-        std::cout << str << std::endl; 
         std::vector<std::string> strs = split(str, ':'); 
         int source = atoi(strs[0].c_str()); 
         g->add_vertex(source); 
@@ -87,7 +127,7 @@ void make_k4_graph(Graph* g)
 }
 void make_petersen_graph(Graph* g)
 {
-    std::cout << "Making graph.... " << std::endl;
+    std::cout << "Making pertersen graph.... " << std::endl;
     g->add_vertex(1);
     g->add_vertex(2);
     g->add_vertex(3);

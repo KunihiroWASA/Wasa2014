@@ -32,18 +32,21 @@ class EnumInducedSubtrees {
     std::unordered_map<const Vertex*, std::unique_ptr<AdjacentList>>
         adjcent_lists;
     std::unordered_map<const Vertex*, bool> added_candidate;
+    std::unordered_map<const Vertex*, bool> in_cand;
 
-    std::stack<std::vector<CandItem*>> cand_history;
-    std::stack<CandItem*> cand_remove_history;
+
+    std::stack<std::vector<CandItem*>> cand_add_history;
+    std::stack<std::vector<CandItem*>> cand_remove_history;
+    std::stack<CandItem*> cand_head_history;
     std::stack<std::vector<std::tuple<AdjItem*, AdjItem*, AdjItem*>>>
         adj_history;
+
     std::stack<std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*,
                                       AdjItem*>>> adjadj_history;
 
     std::stack<std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*,
                                       AdjItem*>>> no_cand_adj_history;
-    std::stack<std::tuple<CandItem*, CandItem*, CandItem*>>
-        no_cand_cand_history;
+    std::stack<CandItem*> no_cand_cand_history;
 
     std::string parenthesis;
 
@@ -53,10 +56,11 @@ class EnumInducedSubtrees {
 
     void enumerate();
     void rec_enumerate();
+    void set_head(const Vertex * v); 
     bool update(const Vertex* v);
     bool restore(const Vertex* v);
 
-    bool candidate_no_add(const Vertex* v);
+    bool candidate_no_add(const Vertex *);
     bool restore_candidate_no_add();
 
     void show_graph();

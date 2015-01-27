@@ -1,13 +1,11 @@
 #include "Vertex.hpp"
 #include "Graph.hpp"
 
-Graph::Graph() : max_degree(0){};
+Graph::Graph() : degeneracy(-1), max_degree(0){};
 
 void Graph::add_vertex(int __id)
 {
     if (vertices.find(__id) != vertices.end()) {
-        // std::cout << "The vertex with id " << __id << " is already added. "
-        // << std::endl;
         return;
     }
     std::unique_ptr<Vertex> v(new Vertex(__id));
@@ -42,8 +40,14 @@ size_t Graph::get_number_of_edges()
     return edges.size();
 };
 
+int Graph::get_degeneracy()
+{
+    return degeneracy; 
+}
+
 void Graph::sort_by_degeneracy()
 {
+    degeneracy = 0; 
     std::vector<std::vector<int>> linear_sort_vector;
 
     sorted_vector.clear();
@@ -55,22 +59,17 @@ void Graph::sort_by_degeneracy()
         linear_sort_vector.at(v_pointer->get_degree()).push_back(v_id);
     }
 
-    /*
-     * for (std::size_t i = 0; i < linear_sort_vector.size(); ++i) {
-     *     std::cout << i << ": ";
-     *     for (const auto& v_id : linear_sort_vector.at(i)) {
-     *         std::cout << v_id << " ";
-     *     }
-     *     std::cout << std::endl;
-     * }
-     */
 
     for (size_t i = 0; i < get_number_of_vertices(); ++i) {
         for (int j = 0; j < max_degree + 1; ++j) {
             if (linear_sort_vector.at(j).empty()) {
                 continue;
             }
+            if (degeneracy < j) {
+                degeneracy = j; 
+            }
             int v_id = linear_sort_vector.at(j).back();
+            linear_sort_vector.at(j).pop_back();
             sorted_vector.push_back(v_id);
             vertices[v_id]->set_degeneracy_id((int)sorted_vector.size());
             for (const auto& u : vertices.at(v_id)->get_adjacents()) {
@@ -80,25 +79,17 @@ void Graph::sort_by_degeneracy()
                                   linear_sort_vector.at(k).end(), u->get_id());
                     if (pos == linear_sort_vector.at(k).end()) {
                         continue;
+                    } else {
+                        linear_sort_vector.at(k).erase(pos); 
+                        linear_sort_vector.at(k-1).push_back(u->get_id()); 
+                        break; 
                     }
                 }
             }
-            linear_sort_vector.at(j).pop_back();
             break;
         }
     }
 
-    /*
-     * for (std::size_t i = 0; i < sorted_vector.size(); ++i) {
-     *     std::cout << i << ": ";
-     *     int v_id = sorted_vector.at(i);
-     *     std::cout << v_id
-     *               << " ("
-     *               << vertices[v_id]->get_degeneracy_id()
-     *               << ") ";
-     *     std::cout << std::endl;
-     * }
-     */
 };
 
 const std::vector<int> Graph::get_sorted_vector()
@@ -117,7 +108,7 @@ void Graph::show()
 {
     std::cout << "SHOW GRAPH" << std::endl;
     for (const auto& v_id : sorted_vector) {
-        std::cout << v_id << ": ";
+        std::cout << v_id << "(" << vertices[v_id]->get_degree() << ", " << vertices[v_id]->get_degeneracy_id() << "): ";
         for (const auto& u : vertices[v_id]->get_adjacents()) {
             std::cout << u->get_id() << " ";
         }

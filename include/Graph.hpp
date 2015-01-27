@@ -25,6 +25,7 @@ class Graph {
 
     size_t get_number_of_vertices();
     size_t get_number_of_edges();
+    int get_degeneracy(); 
     const std::vector<int> get_sorted_vector();
     const Vertex* get_vertex(int v_id);
 
