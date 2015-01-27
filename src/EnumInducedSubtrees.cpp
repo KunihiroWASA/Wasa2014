@@ -53,6 +53,7 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
         cand_items[v] = std::move(v_citem);
     }
 
+    // added_candidate.reset(new bool[g->get_sorted_vector().size()]); 
     for (const auto& v_id : g->get_sorted_vector()) {
         const Vertex* v = g->get_vertex(v_id);
         added_candidate[v] = false;
@@ -154,9 +155,6 @@ void EnumInducedSubtrees::rec_enumerate()
 
     rec_enumerate();
 
-    if (debug_output and output_differential) {
-        --rec_depth;
-    }
     if (make_parenthesis) {
         parenthesis.push_back(')');
     }
@@ -170,9 +168,9 @@ void EnumInducedSubtrees::rec_enumerate()
     if (make_parenthesis) {
         parenthesis.push_back('(');
     }
+
     if (debug_output and output_differential) {
         std::cout << std::setw(rec_depth + 3) << std::setfill(' ') << v->get_id() << std::endl;
-        ++rec_depth;
     }
 
     rec_enumerate();
@@ -182,6 +180,7 @@ void EnumInducedSubtrees::rec_enumerate()
         std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
                   << v->get_id() << std::endl;
     }
+
     if (make_parenthesis) {
         parenthesis.push_back(')');
     }
@@ -197,11 +196,12 @@ bool EnumInducedSubtrees::update(const Vertex* v)
 
     // Update CAND (remove)
     std::vector<CandItem*> cand_remove; 
-
-    CandItem* v_cand_item = cand_items[v].get();
-    in_cand[v] = false; 
-    CAND.remove_item(v_cand_item);
-    cand_remove.push_back(v_cand_item); 
+    {
+        CandItem* v_cand_item = cand_items[v].get();
+        in_cand[v] = false; 
+        CAND.remove_item(v_cand_item);
+        cand_remove.push_back(v_cand_item); 
+    }
 
     for (AdjItem* u_item = v_adj_list->get_larger_head();
             u_item != v_adj_list->larger_head_tail.get();
@@ -290,10 +290,11 @@ bool EnumInducedSubtrees::update(const Vertex* v)
 bool EnumInducedSubtrees::restore(const Vertex* v)
 {
     for (int i = (int)adjadj_history.top().size() - 1; i >= 0; --i) {
-        const Vertex* w = std::get<0>(adjadj_history.top().at(i));
-        const Vertex* u = std::get<1>(adjadj_history.top().at(i));
-        auto prev_item  = std::get<2>(adjadj_history.top().at(i));
-        auto next_item  = std::get<3>(adjadj_history.top().at(i));
+        auto adjadj_ops = adjadj_history.top().at(i); 
+        const Vertex* w = std::get<0>(adjadj_ops);
+        const Vertex* u = std::get<1>(adjadj_ops);
+        auto prev_item  = std::get<2>(adjadj_ops);
+        auto next_item  = std::get<3>(adjadj_ops);
 
         AdjacentList* w_adj_list = adjcent_lists[w].get();
         AdjItem* u_item          = adj_items[w][u].get();

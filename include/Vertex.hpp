@@ -7,7 +7,11 @@
 class CandItem;
 class AdjItem;
 
+
+
 class Vertex {
+    static int cnt; 
+    const int u_id; 
     const int id;
     int degeneracy_id;
     int degree;
