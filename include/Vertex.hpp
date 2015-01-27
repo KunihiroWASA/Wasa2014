@@ -15,9 +15,7 @@ class Vertex {
     std::vector<Vertex *> adjacents;
 
    public:
-    Vertex(int __id)
-        : id(__id), degeneracy_id(-1), degree(0), added_candidte_set(false){};
-
+    Vertex(int __id); 
     int get_id() const;
     void add_adjacents(Vertex *v);
     int get_degree();

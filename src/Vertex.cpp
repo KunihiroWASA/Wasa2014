@@ -2,6 +2,9 @@
 #include "CandidateList.hpp"
 #include "AdjacentList.hpp"
 
+Vertex::Vertex(int __id)
+    : id(__id), degeneracy_id(-1), degree(0), added_candidte_set(false){};
+
 int Vertex::get_id() const
 {
     return id;

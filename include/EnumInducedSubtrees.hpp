@@ -17,7 +17,12 @@
 class EnumInducedSubtrees {
     Graph* g;
     CandidateList CAND;
-    int rec_depth; 
+    int rec_depth;
+    bool make_parenthesis; 
+    bool debug_output; 
+    bool output_differential; 
+    uint64_t induced_subtrees_num; 
+
     std::vector<const Vertex*> induced_subtree;
 
     std::unordered_map<
@@ -41,8 +46,9 @@ class EnumInducedSubtrees {
         no_cand_cand_history;
 
     std::string parenthesis;
+
    public:
-    EnumInducedSubtrees(){};
+    EnumInducedSubtrees();
     void init_graph(Graph* __g);
 
     void enumerate();
@@ -56,6 +62,8 @@ class EnumInducedSubtrees {
     void show_graph();
     void show_induced_subtree();
 
-
+    void set_make_parenthesis(bool b); 
+    void set_debug_output(bool b); 
+    void set_output_differential(bool b); 
 };
 #endif

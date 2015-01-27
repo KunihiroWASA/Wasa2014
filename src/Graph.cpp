@@ -1,11 +1,13 @@
 #include "Vertex.hpp"
 #include "Graph.hpp"
 
+Graph::Graph() : max_degree(0){};
+
 void Graph::add_vertex(int __id)
 {
     if (vertices.find(__id) != vertices.end()) {
         // std::cout << "The vertex with id " << __id << " is already added. "
-                  // << std::endl;
+        // << std::endl;
         return;
     }
     std::unique_ptr<Vertex> v(new Vertex(__id));

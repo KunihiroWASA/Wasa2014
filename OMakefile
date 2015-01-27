@@ -8,6 +8,6 @@ LIBS     += ./src/libeis
 .DEFAULT: $(CXXProgram $(TARGET), $(SRCS))
 
 .PHONY: clean
-	rm $(TARGET)
+	rm $(TARGET) *.o *.a
 
 .SUBDIRS: src

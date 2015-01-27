@@ -1,6 +1,9 @@
 #include "CandidateList.hpp"
 #include "Vertex.hpp"
 
+CandItem::CandItem(const Vertex* __v)
+    : v(__v), cand_next(this), cand_prev(this){};
+
 CandItem* CandItem::get_next()
 {
     return cand_next;
@@ -25,6 +28,8 @@ void CandItem::set_prev(CandItem* prev)
 {
     cand_prev = prev;
 }
+
+CandidateList::CandidateList() : size(0), head_tail(new CandItem(nullptr)){};
 
 void CandidateList::set_head(CandItem* v_item)
 {

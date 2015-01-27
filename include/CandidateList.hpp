@@ -13,7 +13,7 @@ class CandItem {
     CandItem* cand_prev;
 
    public:
-    CandItem(const Vertex* __v) : v(__v), cand_next(this), cand_prev(this){};
+    CandItem(const Vertex* __v); 
 
     CandItem* get_next();
     CandItem* get_prev();
@@ -28,7 +28,7 @@ class CandidateList {
     std::unique_ptr<CandItem> head_tail;
 
    public:
-    CandidateList() : size(0), head_tail(new CandItem(nullptr)){};
+    CandidateList(); 
 
     void inc_size();
     void dec_size();

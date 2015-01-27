@@ -1,6 +1,9 @@
 #include "AdjacentList.hpp"
 #include "Vertex.hpp"
 
+AdjItem::AdjItem(const Vertex* __v)
+    : v(__v), adj_next(nullptr), adj_prev(nullptr){};
+
 void AdjItem::set_next(AdjItem* __next)
 {
     adj_next = __next;
@@ -25,6 +28,22 @@ AdjItem* AdjItem::get_prev()
 {
     return adj_prev;
 }
+
+AdjacentList::AdjacentList(const Vertex* __v)
+    : v(__v),
+      larger_head_tail(new AdjItem(nullptr)),
+      smaller_head_tail(new AdjItem(nullptr)),
+      smaller_avoiding_head_tail(new AdjItem(nullptr))
+{
+    larger_head_tail->set_prev(larger_head_tail.get());
+    larger_head_tail->set_next(larger_head_tail.get());
+
+    smaller_head_tail->set_prev(smaller_head_tail.get());
+    smaller_head_tail->set_next(smaller_head_tail.get());
+
+    smaller_avoiding_head_tail->set_prev(smaller_avoiding_head_tail.get());
+    smaller_avoiding_head_tail->set_next(smaller_avoiding_head_tail.get());
+};
 
 void AdjacentList::push_back_to_larger(AdjItem* a)
 {

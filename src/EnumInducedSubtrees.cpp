@@ -1,5 +1,25 @@
 #include "EnumInducedSubtrees.hpp"
 
+EnumInducedSubtrees::EnumInducedSubtrees():
+    make_parenthesis(false), 
+    debug_output(false), 
+    output_differential(false), 
+    induced_subtrees_num(0)
+{};
+void EnumInducedSubtrees::set_make_parenthesis(bool b)
+{
+    make_parenthesis = b; 
+} 
+void EnumInducedSubtrees::set_debug_output(bool b)
+{
+    debug_output = b; 
+} 
+
+void EnumInducedSubtrees::set_output_differential(bool b)
+{
+    output_differential = b; 
+} 
+
 void EnumInducedSubtrees::init_graph(Graph* __g)
 {
     g = __g;
@@ -18,8 +38,7 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
 
             if (v->get_degeneracy_id() < u->get_degeneracy_id()) {
                 adjcent_lists[v]->push_back_to_larger(v_u_p);
-            }
-            else {
+            } else {
                 adjcent_lists[v]->push_back_to_smaller(v_u_p);
             }
         }
@@ -36,63 +55,106 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
         const Vertex* v = g->get_vertex(v_id);
         added_candidate[v] = false;
     }
-
 }
 
 void EnumInducedSubtrees::enumerate()
 {
-    rec_depth = 0; 
-    parenthesis = "("; 
+    if (debug_output) {
+        std::cout << "START ENUMERATION: " << std::endl;
+    }
+    rec_depth = 0;
+    if (make_parenthesis) {
+        parenthesis = "(";
+    }
     for (const auto& v_id : g->get_sorted_vector()) {
         const Vertex* v = g->get_vertex(v_id);
         CAND.set_head(cand_items[v].get());
         candidate_no_add(v);
         added_candidate[v] = true;
-        std::cout << std::setw(rec_depth+3) << std::setfill(' ')<< v->get_id() << std::endl; 
+
         induced_subtree.push_back(v);
         update(v);
-        parenthesis.push_back('('); 
-        ++rec_depth;  
+
+        if (debug_output and output_differential) {
+            std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
+                      << v->get_id() << std::endl;
+            ++rec_depth;
+        }
+        if (make_parenthesis) {
+            parenthesis.push_back('(');
+        }
+
         rec_enumerate();
-        --rec_depth;  
-        parenthesis.push_back(')'); 
+
+        if (make_parenthesis) {
+            parenthesis.push_back(')');
+        }
+        if (debug_output and output_differential) {
+            --rec_depth;
+            std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
+                      << v->get_id() << std::endl;
+        }
+
         restore(v);
         induced_subtree.pop_back();
-        std::cout << std::setw(rec_depth+2) << std::setfill(' ')<< '-' << v->get_id() << std::endl; 
     }
 
-    parenthesis.push_back(')'); 
-    // std::cout << parenthesis << std::endl; 
+    if (make_parenthesis) {
+        parenthesis.push_back(')');
+        if (debug_output) {
+            std::cout << parenthesis << std::endl;
+        }
+    }
+    std::cout << "SUBTREE NUM.: " << induced_subtrees_num << std::endl; 
+    return; 
 }
 
 void EnumInducedSubtrees::rec_enumerate()
 {
     if (CAND.empty()) {
-        // show_induced_subtree();
+        ++induced_subtrees_num; 
+        if (debug_output and !output_differential) {
+            show_induced_subtree();
+        }
         return;
     }
     const Vertex* v = CAND.get_head()->get_vertex();
 
     candidate_no_add(v);
-    parenthesis.push_back('('); 
-    ++rec_depth;  
+
+    if (make_parenthesis) {
+        parenthesis.push_back('(');
+    }
+    ++rec_depth;
     rec_enumerate();
-    --rec_depth;  
-    parenthesis.push_back(')'); 
+    --rec_depth;
+    if (make_parenthesis) {
+        parenthesis.push_back(')');
+    }
+
     restore_candidate_no_add();
 
     induced_subtree.push_back(v);
-    std::cout << std::setw(rec_depth+3) << std::setfill(' ')<< v->get_id() << std::endl; 
     update(v);
-    parenthesis.push_back('('); 
-    ++rec_depth;  
+    if (make_parenthesis) {
+        parenthesis.push_back('(');
+    }
+    if (debug_output and output_differential) {
+        std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
+                  << v->get_id() << std::endl;
+        ++rec_depth;
+    }
     rec_enumerate();
-    --rec_depth;  
-    parenthesis.push_back(')'); 
+    if (debug_output and output_differential) {
+        --rec_depth;
+        std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
+                  << v->get_id() << std::endl;
+    }
+    if (make_parenthesis) {
+        parenthesis.push_back(')');
+    }
     restore(v);
-    std::cout << std::setw(rec_depth+2) << std::setfill(' ')<< '-' << v->get_id() << std::endl; 
     induced_subtree.pop_back();
-
 }
 
 bool EnumInducedSubtrees::update(const Vertex* v)

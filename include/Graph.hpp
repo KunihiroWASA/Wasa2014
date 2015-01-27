@@ -18,7 +18,7 @@ class Graph {
     std::vector<int> sorted_vector;
 
    public:
-    Graph() : max_degree(0){};
+    Graph(); 
 
     void add_vertex(int __id);
     void add_edge(int v_id, int u_id);
