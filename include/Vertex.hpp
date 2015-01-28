@@ -4,10 +4,6 @@
 #include <algorithm>
 #include <vector>
 
-class CandItem;
-class AdjItem;
-
-
 
 class Vertex {
     static int cnt; 
@@ -20,7 +16,7 @@ class Vertex {
 
    public:
     Vertex(int __id); 
-    int get_id() const;
+    inline int get_id() const { return id; }; 
     int get_label() const;
     void add_adjacents(Vertex *v);
     int get_degree();

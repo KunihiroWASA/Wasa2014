@@ -1,33 +1,6 @@
-#include "CandidateList.hpp"
 #include "Vertex.hpp"
+#include "CandidateList.hpp"
 
-CandItem::CandItem(const Vertex* __v)
-    : v(__v), cand_next(this), cand_prev(this){};
-
-CandItem* CandItem::get_next()
-{
-    return cand_next;
-}
-
-CandItem* CandItem::get_prev()
-{
-    return cand_prev;
-}
-
-const Vertex* CandItem::get_vertex() const
-{
-    return v;
-}
-
-void CandItem::set_next(CandItem* next)
-{
-    cand_next = next;
-}
-
-void CandItem::set_prev(CandItem* prev)
-{
-    cand_prev = prev;
-}
 
 CandidateList::CandidateList() : size(0), head_tail(new CandItem(nullptr)){};
 
@@ -42,31 +15,6 @@ void CandidateList::set_head(CandItem* v_item)
         std::cerr << "ERROR (1)" << std::endl; 
         exit(1); 
     }
-}
-
-CandItem* CandidateList::get_head()
-{
-    return head_tail->get_next();
-}
-
-CandItem* CandidateList::get_tail()
-{
-    return head_tail->get_prev();
-}
-
-void CandidateList::inc_size()
-{
-    ++size;
-}
-
-void CandidateList::dec_size()
-{
-    --size;
-}
-
-size_t CandidateList::get_size()
-{
-    return size;
 }
 
 void CandidateList::merge(std::vector<CandItem*>& addible_cand_items)
@@ -121,13 +69,9 @@ void CandidateList::show()
 {
     std::cout << "CAND: ";
     for (CandItem* c = get_head(); c != head_tail.get(); c = c->get_next()) {
-        std::cout << c->get_vertex()->get_id() << "("
+        std::cout << c->get_vertex()->get_label() << "("
                   << c->get_vertex()->get_degeneracy_id() << ") ";
     }
     std::cout << std::endl;
 }
 
-bool CandidateList::empty()
-{
-    return head_tail.get()->get_next() == head_tail.get();
-}

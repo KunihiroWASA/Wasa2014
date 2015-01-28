@@ -4,7 +4,6 @@
 #include <iostream>
 #include <memory>
 
-class Vertex;
 
 class AdjItem {
     const Vertex* v;
@@ -12,14 +11,15 @@ class AdjItem {
     AdjItem* adj_prev;
 
    public:
-    AdjItem(const Vertex* __v); 
-    void set_next(AdjItem* __next);
-    void set_prev(AdjItem* __prev);
+    AdjItem(const Vertex* __v)
+        : v(__v), adj_next(nullptr), adj_prev(nullptr){};
 
-    const Vertex* get_vertex() const;
+    inline void set_next(AdjItem* __next) { adj_next = __next;}; 
+    inline void set_prev(AdjItem* __prev) { adj_prev = __prev;}; 
 
-    AdjItem* get_next();
-    AdjItem* get_prev();
+    inline const Vertex* get_vertex() const { return v; }; 
+    inline AdjItem* get_next() { return adj_next; }; 
+    inline AdjItem* get_prev() { return adj_prev; }; 
 };
 
 class AdjacentList {
@@ -36,13 +36,13 @@ class AdjacentList {
     void push_back_to_smaller(AdjItem* a);
     void push_back_to_smaller_avoiding(AdjItem* a);
 
-    AdjItem* get_larger_head();
-    AdjItem* get_smaller_head();
-    AdjItem* get_smaller_avoiding_head();
+    inline AdjItem* get_larger_tail() { return larger_head_tail->get_prev(); }; 
+    inline AdjItem* get_smaller_tail() { return smaller_head_tail->get_prev(); }; 
+    inline AdjItem* get_smaller_avoiding_tail() { return smaller_avoiding_head_tail->get_prev(); }; 
 
-    AdjItem* get_larger_tail();
-    AdjItem* get_smaller_tail();
-    AdjItem* get_smaller_avoiding_tail();
+    inline AdjItem* get_larger_head() { return larger_head_tail->get_next(); }; 
+    inline AdjItem* get_smaller_head() { return smaller_head_tail->get_next(); }; 
+    inline AdjItem* get_smaller_avoiding_head() { return smaller_avoiding_head_tail->get_next(); }; 
 
     void remove_item(AdjItem* a);
 

@@ -1,6 +1,4 @@
 #include "Vertex.hpp"
-#include "CandidateList.hpp"
-#include "AdjacentList.hpp"
 
 int Vertex::cnt = 0;
 
@@ -11,10 +9,6 @@ Vertex::Vertex(int __id)
       degree(0),
       added_candidte_set(false){};
 
-int Vertex::get_id() const
-{
-    return id;
-}
 int Vertex::get_label() const
 {
     return label;

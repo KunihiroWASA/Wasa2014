@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 
-class Vertex;
 
 class CandItem {
     const Vertex* v;
@@ -13,14 +12,16 @@ class CandItem {
     CandItem* cand_prev;
 
    public:
-    CandItem(const Vertex* __v); 
+    CandItem(const Vertex* __v)
+        : v(__v), cand_next(this), cand_prev(this){};
 
-    CandItem* get_next();
-    CandItem* get_prev();
-    const Vertex* get_vertex() const;
+    inline void set_next(CandItem* next) { cand_next = next; }; 
+    inline void set_prev(CandItem* prev) { cand_prev = prev; }; 
 
-    void set_next(CandItem* next);
-    void set_prev(CandItem* prev);
+    inline const Vertex* get_vertex() const { return v; }; 
+    inline CandItem* get_next() { return cand_next; }; 
+    inline CandItem* get_prev() { return cand_prev; }; 
+
 };
 
 class CandidateList {
@@ -30,21 +31,18 @@ class CandidateList {
    public:
     CandidateList(); 
 
-    void inc_size();
-    void dec_size();
-
     void set_head(CandItem* v_item);
-    CandItem* get_head();
-    CandItem* get_tail();
-    size_t get_size();
+
+    inline CandItem* get_head() { return head_tail->get_next(); };
+    inline CandItem* get_tail() { return head_tail->get_prev(); };
 
     void merge(std::vector<CandItem*>& addible_cand_items);
 
     void remove_item(CandItem* c_item);
 
     void show();
+    inline bool empty() { return head_tail.get()->get_next() == head_tail.get(); };  
 
-    bool empty();
 };
 
 #endif

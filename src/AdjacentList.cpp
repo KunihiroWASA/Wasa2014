@@ -1,33 +1,6 @@
-#include "AdjacentList.hpp"
 #include "Vertex.hpp"
+#include "AdjacentList.hpp"
 
-AdjItem::AdjItem(const Vertex* __v)
-    : v(__v), adj_next(nullptr), adj_prev(nullptr){};
-
-void AdjItem::set_next(AdjItem* __next)
-{
-    adj_next = __next;
-}
-
-void AdjItem::set_prev(AdjItem* __prev)
-{
-    adj_prev = __prev;
-}
-
-const Vertex* AdjItem::get_vertex() const
-{
-    return v;
-}
-
-AdjItem* AdjItem::get_next()
-{
-    return adj_next;
-}
-
-AdjItem* AdjItem::get_prev()
-{
-    return adj_prev;
-}
 
 AdjacentList::AdjacentList(const Vertex* __v)
     : v(__v),
@@ -83,50 +56,21 @@ void AdjacentList::show()
     std::cout << v->get_id() << ": ";
     for (AdjItem* a = get_smaller_head(); a != smaller_head_tail.get();
          a = a->get_next()) {
-        std::cout << a->get_vertex()->get_id() << " ";
+        std::cout << a->get_vertex()->get_label() << " ";
     }
     std::cout << "-- ";
     for (AdjItem* a = get_smaller_avoiding_head();
          a != smaller_avoiding_head_tail.get(); a = a->get_next()) {
-        std::cout << a->get_vertex()->get_id() << " ";
+        std::cout << a->get_vertex()->get_label() << " ";
     }
     std::cout << "-- ";
     for (AdjItem* a = get_larger_head(); a != larger_head_tail.get();
          a = a->get_next()) {
-        std::cout << a->get_vertex()->get_id() << " ";
+        std::cout << a->get_vertex()->get_label() << " ";
     }
     std::cout << std::endl;
 }
 
-AdjItem* AdjacentList::get_larger_tail()
-{
-    return larger_head_tail->get_prev();
-}
-
-AdjItem* AdjacentList::get_smaller_tail()
-{
-    return smaller_head_tail->get_prev();
-}
-
-AdjItem* AdjacentList::get_smaller_avoiding_tail()
-{
-    return smaller_avoiding_head_tail->get_prev();
-}
-
-AdjItem* AdjacentList::get_larger_head()
-{
-    return larger_head_tail->get_next();
-}
-
-AdjItem* AdjacentList::get_smaller_head()
-{
-    return smaller_head_tail->get_next();
-}
-
-AdjItem* AdjacentList::get_smaller_avoiding_head()
-{
-    return smaller_avoiding_head_tail->get_next();
-}
 
 void AdjacentList::remove_item(AdjItem* a)
 {

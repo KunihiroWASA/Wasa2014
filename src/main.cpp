@@ -86,8 +86,6 @@ int main(int argc, char const* argv[])
     eis.init_graph(g.get());
 
     eis.show_graph(); 
-    std::cout << "The degeneracy of the input graph: " << g->get_degeneracy() << std::endl; 
-    std::cout << std::endl; 
 
     eis.enumerate();
     return 0;
