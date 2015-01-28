@@ -13,6 +13,7 @@ class Vertex;
 class Graph {
     int degeneracy;
     int max_degree;
+    std::unordered_map<int, int> label_to_id; 
     std::unordered_map<int, std::unique_ptr<Vertex>> vertices;
     std::vector<std::pair<int, int>> edges;  // use vertices id;
     std::vector<int> sorted_vector;
@@ -20,8 +21,8 @@ class Graph {
    public:
     Graph(); 
 
-    void add_vertex(int __id);
-    void add_edge(int v_id, int u_id);
+    int add_vertex(int __label);
+    void add_edge(int v_label, int u_label);
 
     size_t get_number_of_vertices();
     size_t get_number_of_edges();

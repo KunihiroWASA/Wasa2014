@@ -92,14 +92,12 @@ void make_graph_from_file(Graph * g, std::string& file_path)
     while (getline(ifs, str)) {
         std::vector<std::string> strs = split(str, ':'); 
         int source = atoi(strs[0].c_str()); 
-        g->add_vertex(source); 
+        int s_id = g->add_vertex(source); 
         std::vector<std::string> strss = split(strs[1], ' '); 
         for (auto& s : strss) {
             int dist = atoi(s.c_str()); 
-            g->add_vertex(dist); 
-            if (g->get_vertex(source)->get_id() < g->get_vertex(dist)->get_id() ) {
-                g->add_edge(source, dist);
-            }
+            int d_id = g->add_vertex(dist); 
+            g->add_edge(source, dist);
         }
     }
     std::cout << "done. " << std::endl;

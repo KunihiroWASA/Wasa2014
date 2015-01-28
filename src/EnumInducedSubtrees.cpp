@@ -97,7 +97,7 @@ void EnumInducedSubtrees::enumerate()
             std::cout << std::endl; 
             if (output_differential) {
             std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
-                      << v->get_id() << std::endl;
+                      << v->get_label() << std::endl;
             ++rec_depth;
             }
         }
@@ -113,7 +113,7 @@ void EnumInducedSubtrees::enumerate()
         if (debug_output and output_differential) {
             --rec_depth;
             std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
-                      << v->get_id() << std::endl;
+                      << v->get_label() << std::endl;
         }
 
         restore(v);
@@ -170,7 +170,7 @@ void EnumInducedSubtrees::rec_enumerate()
     }
 
     if (debug_output and output_differential) {
-        std::cout << std::setw(rec_depth + 3) << std::setfill(' ') << v->get_id() << std::endl;
+        std::cout << std::setw(rec_depth + 3) << std::setfill(' ') << v->get_label() << std::endl;
     }
 
     rec_enumerate();
@@ -178,7 +178,7 @@ void EnumInducedSubtrees::rec_enumerate()
     if (debug_output and output_differential) {
         --rec_depth;
         std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
-                  << v->get_id() << std::endl;
+                  << v->get_label() << std::endl;
     }
 
     if (make_parenthesis) {
@@ -401,7 +401,7 @@ void EnumInducedSubtrees::show_induced_subtree()
 {
     std::cout << "SHOW INDUCED SUBTREE ";
     for (const auto& v : induced_subtree) {
-        std::cout << v->get_id() << " ";
+        std::cout << v->get_label() << " ";
     }
     std::cout << std::endl;
 }

@@ -3,20 +3,48 @@
 
 Graph::Graph() : degeneracy(-1), max_degree(0){};
 
-void Graph::add_vertex(int __id)
+int Graph::add_vertex(int __label)
 {
-    if (vertices.find(__id) != vertices.end()) {
-        return;
+    if (label_to_id.find(__label) != label_to_id.end()) {
+        return label_to_id[__label];
     }
-    std::unique_ptr<Vertex> v(new Vertex(__id));
-    vertices[__id] = std::move(v);
+    std::unique_ptr<Vertex> v(new Vertex(__label));
+    int id               = v->get_id();
+    label_to_id[__label] = id;
+    vertices[id]         = std::move(v);
+
+    return id; 
 };
 
-void Graph::add_edge(int v_id, int u_id)
+void Graph::add_edge(int v_label, int u_label)
 {
+    if (label_to_id.find(v_label) == label_to_id.end()) {
+        std::cout << "ERR" << std::endl; 
+        exit(1); 
+    }
+    if (label_to_id.find(u_label) == label_to_id.end()) {
+        std::cout << "ERR" << std::endl; 
+        exit(1); 
+    }
+    int v_id = label_to_id[v_label]; 
+    int u_id = label_to_id[u_label];
+
+    if (u_id < v_id) {
+        if (find(edges.begin(), edges.end(), std::make_pair(v_id, u_id)) !=
+            edges.end()) {
+            return;
+        }
+    } else {
+        if (find(edges.begin(), edges.end(), std::make_pair(u_id, v_id)) !=
+            edges.end()) {
+            return;
+        }
+    }
     edges.push_back(std::make_pair(v_id, u_id));
+
     vertices[u_id]->add_adjacents(vertices[v_id].get());
     vertices[v_id]->add_adjacents(vertices[u_id].get());
+
     if (vertices[u_id]->get_degree() > max_degree) {
         max_degree = vertices[u_id]->get_degree();
     }
@@ -110,7 +138,7 @@ void Graph::show()
     for (const auto& v_id : sorted_vector) {
         std::cout << v_id << "(" << vertices[v_id]->get_degree() << ", " << vertices[v_id]->get_degeneracy_id() << "): ";
         for (const auto& u : vertices[v_id]->get_adjacents()) {
-            std::cout << u->get_id() << " ";
+            std::cout << u->get_label() << " ";
         }
         std::cout << std::endl;
     }
