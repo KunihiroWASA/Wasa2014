@@ -10,3 +10,4 @@ main.*
 *.a
 hoge
 *un\~
+depend.inc

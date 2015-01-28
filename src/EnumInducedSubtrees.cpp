@@ -1,25 +1,29 @@
 #include "EnumInducedSubtrees.hpp"
 
 EnumInducedSubtrees::EnumInducedSubtrees():
-    make_parenthesis(false), 
-    debug_output(false), 
-    output_differential(false), 
+    output_search_tree_parenthesis(false), 
+    output_induced_subtree_differential(false), 
+    output_induced_subtree_entire(false), 
+    output_something(false), 
     induced_subtrees_num(0)
 {};
 
-void EnumInducedSubtrees::set_make_parenthesis(bool b)
+void EnumInducedSubtrees::set_output_search_tree_parenthesis(bool b)
 {
-    make_parenthesis = b; 
+    output_search_tree_parenthesis      = b;
+    output_something                    = true;
 } 
 
-void EnumInducedSubtrees::set_debug_output(bool b)
+void EnumInducedSubtrees::set_output_induced_subtree_differential(bool b)
 {
-    debug_output = b; 
+    output_induced_subtree_differential = b;
+    output_something                    = true;
 } 
 
-void EnumInducedSubtrees::set_output_differential(bool b)
+void EnumInducedSubtrees::set_output_induced_subtree_entire(bool b)
 {
-    output_differential = b; 
+    output_induced_subtree_entire       = b;
+    output_something                    = true;
 } 
 
 void EnumInducedSubtrees::init_graph(Graph* __g)
@@ -86,8 +90,9 @@ void EnumInducedSubtrees::enumerate()
 {
     std::cout << "START ENUMERATION: " << std::endl;
     rec_depth = 0;
-    if (make_parenthesis) {
-        parenthesis = "(";
+    induced_subtrees_num = 0; 
+    if (output_search_tree_parenthesis) {
+        std::cout << '('; 
     }
     for (const auto& v_id : g->get_sorted_vector()) {
 
@@ -96,24 +101,26 @@ void EnumInducedSubtrees::enumerate()
         induced_subtree.push_back(v);
         update(v);
 
-        if (debug_output) {
+        if (output_induced_subtree_differential) {
             std::cout << std::endl; 
-            if (output_differential) {
             std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
-                      << v->get_label() << std::endl;
+                << v->get_label() << std::endl;
             ++rec_depth;
-            }
         }
-        if (make_parenthesis) {
-            parenthesis.push_back('(');
+        if (output_search_tree_parenthesis) {
+            std::cout << '('; 
         }
 
-        rec_enumerate();
-
-        if (make_parenthesis) {
-            parenthesis.push_back(')');
+        if (output_something) {
+            rec_enumerate_output();
+        } else {
+            rec_enumerate();
         }
-        if (debug_output and output_differential) {
+
+        if (output_search_tree_parenthesis) {
+            std::cout << ')'; 
+        }
+        if (output_induced_subtree_differential) {
             --rec_depth;
             std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
                       << v->get_label() << std::endl;
@@ -125,9 +132,8 @@ void EnumInducedSubtrees::enumerate()
         CAND.remove_item(cand_items[v_id].get()); 
     }
 
-    if (make_parenthesis) {
-        parenthesis.push_back(')');
-        std::cout << parenthesis << std::endl;
+    if (output_search_tree_parenthesis) {
+        std::cout << ')' << std::endl; 
     }
     std::cout << "SUBTREE NUM.: " << induced_subtrees_num << std::endl; 
     return; 
@@ -140,8 +146,31 @@ void EnumInducedSubtrees::rec_enumerate()
 
     if (CAND.empty()) {
         ++induced_subtrees_num; 
+        return;
+    }
 
-        if (debug_output and !output_differential) {
+    candidate_no_add(v);
+    rec_enumerate();
+    restore_candidate_no_add();
+
+
+    induced_subtree.push_back(v);
+    update(v);
+    rec_enumerate();
+    restore(v);
+    induced_subtree.pop_back();
+
+}
+
+void EnumInducedSubtrees::rec_enumerate_output()
+{
+
+    const Vertex* v = CAND.get_head()->get_vertex();
+
+    if (CAND.empty()) {
+        ++induced_subtrees_num; 
+
+        if (output_induced_subtree_entire) {
             show_induced_subtree();
         }
         return;
@@ -149,17 +178,17 @@ void EnumInducedSubtrees::rec_enumerate()
 
     candidate_no_add(v);
 
-    if (make_parenthesis) {
-        parenthesis.push_back('(');
+    if (output_search_tree_parenthesis) {
+        std::cout << '(';
     }
-    if (debug_output and output_differential) {
+    if (output_induced_subtree_differential) {
         ++rec_depth;
     }
 
-    rec_enumerate();
+    rec_enumerate_output();
 
-    if (make_parenthesis) {
-        parenthesis.push_back(')');
+    if (output_search_tree_parenthesis) {
+        std::cout << ')';
     }
 
     restore_candidate_no_add();
@@ -168,30 +197,31 @@ void EnumInducedSubtrees::rec_enumerate()
     induced_subtree.push_back(v);
     update(v);
 
-    if (make_parenthesis) {
-        parenthesis.push_back('(');
+    if (output_search_tree_parenthesis) {
+        std::cout << '(';
     }
 
-    if (debug_output and output_differential) {
+    if (output_induced_subtree_differential) {
         std::cout << std::setw(rec_depth + 3) << std::setfill(' ') << v->get_label() << std::endl;
     }
 
-    rec_enumerate();
+    rec_enumerate_output();
 
-    if (debug_output and output_differential) {
+    if (output_induced_subtree_differential) {
         --rec_depth;
         std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
                   << v->get_label() << std::endl;
     }
 
-    if (make_parenthesis) {
-        parenthesis.push_back(')');
+    if (output_search_tree_parenthesis) {
+        std::cout << ')';
     }
 
     restore(v);
     induced_subtree.pop_back();
 
 }
+
 
 bool EnumInducedSubtrees::update(const Vertex* v)
 {
@@ -386,7 +416,6 @@ bool EnumInducedSubtrees::restore_candidate_no_add()
         CandItem* cand_item_v      = no_cand_cand_history.top(); 
         CandItem* cand_item_v_prev = cand_item_v->get_prev();
         CandItem* cand_item_v_next = cand_item_v->get_next();
-
         cand_item_v_prev->set_next(cand_item_v);
         cand_item_v_next->set_prev(cand_item_v);
     }
@@ -403,12 +432,11 @@ void EnumInducedSubtrees::show_graph()
     // }
     g->show();
     std::cout << std::endl;
-    std::cout << std::endl;
 }
 
 void EnumInducedSubtrees::show_induced_subtree()
 {
-    std::cout << "SHOW INDUCED SUBTREE ";
+    // std::cout << "Show induced subtree ";
     for (const auto& v : induced_subtree) {
         std::cout << v->get_label() << " ";
     }

@@ -1,13 +1,15 @@
-SRCS   = main
+SRCS   = ./src/main
 TARGET = enum_induced_subtree
 CC     = g++ 
+SRCDIR = ./src
 
 CXXFLAGS += -g -Wextra -O3 -std=c++11 -I./include 
 LDFLAGS += -L./src -lboost_program_options
-LIBS     += ./src/libeis
+LIBS     += $(SRCDIR)/libeis
 .DEFAULT: $(CXXProgram $(TARGET), $(SRCS))
 
 .PHONY: clean
-	rm $(TARGET) *.o *.a
+clean:
+	rm $(TARGET) $(SRCDIR)/*.o $(SRCDIR)/*.a
 
 .SUBDIRS: src

@@ -136,7 +136,7 @@ void Graph::show()
 {
     std::cout << "SHOW GRAPH" << std::endl;
     for (const auto& v_id : sorted_vector) {
-        std::cout << v_id << "(" << vertices[v_id]->get_degree() << ", " << vertices[v_id]->get_degeneracy_id() << "): ";
+        std::cout << v_id << "(" << vertices[v_id]->get_degeneracy_id() << "): ";
         for (const auto& u : vertices[v_id]->get_adjacents()) {
             std::cout << u->get_label() << " ";
         }
