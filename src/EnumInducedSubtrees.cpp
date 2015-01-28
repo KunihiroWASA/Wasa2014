@@ -29,34 +29,35 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
     g->sort_vertices();
 
     // init adjacent lists
+    adjacent_lists.reset(new std::unique_ptr<AdjacentList>[g->get_sorted_vector().size()]); 
     for (const auto& v_id : g->get_sorted_vector()) {
         const Vertex* v = g->get_vertex(v_id);
         std::unique_ptr<AdjacentList> v_alist(new AdjacentList(v));
-        adjcent_lists[v] = std::move(v_alist);
+        adjacent_lists[v_id] = std::move(v_alist);
         for (const Vertex* u : v->get_adjacents()) {
             std::unique_ptr<AdjItem> v_u(new AdjItem(u));
             AdjItem* v_u_p = v_u.get();
             adj_items[v][u] = std::move(v_u);
 
             if (v->get_degeneracy_id() < u->get_degeneracy_id()) {
-                adjcent_lists[v]->push_back_to_larger(v_u_p);
+                adjacent_lists[v_id]->push_back_to_larger(v_u_p);
             } else {
-                adjcent_lists[v]->push_back_to_smaller(v_u_p);
+                adjacent_lists[v_id]->push_back_to_smaller(v_u_p);
             }
         }
     }
 
     // init candidate list
+    cand_items.reset(new std::unique_ptr<CandItem>[g->get_sorted_vector().size()]); 
     for (const auto& v_id : g->get_sorted_vector()) {
         const Vertex* v = g->get_vertex(v_id);
         std::unique_ptr<CandItem> v_citem(new CandItem(v));
-        cand_items[v] = std::move(v_citem);
+        cand_items[v_id] = std::move(v_citem);
     }
 
     added_candidate.reset(new bool[g->get_sorted_vector().size()]); 
     in_cand.reset(new bool[g->get_sorted_vector().size()]); 
     for (const auto& v_id : g->get_sorted_vector()) {
-        const Vertex* v = g->get_vertex(v_id);
         added_candidate[v_id] = false;
         in_cand[v_id] = false;
     }
@@ -64,15 +65,16 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
 
 void EnumInducedSubtrees::set_head(const Vertex * v)
 {
-    CAND.set_head(cand_items[v].get());
-    added_candidate[v->get_id()]    = true;
-    AdjacentList* v_alist = adjcent_lists[v].get();
+    const int v_id = v->get_id(); 
+    CAND.set_head(cand_items[v_id].get());
+    added_candidate[v_id]    = true;
+    AdjacentList* v_alist = adjacent_lists[v_id].get();
     for (AdjItem* u_item = v_alist->get_larger_head();
             u_item != v_alist->larger_head_tail.get();
             u_item = u_item->get_next()) {
 
         const Vertex* u          = u_item->get_vertex();
-        AdjacentList* u_adj_list = adjcent_lists[u].get();
+        AdjacentList* u_adj_list = adjacent_lists[u->get_id()].get();
         AdjItem* v_item          = adj_items[u][v].get();
 
         u_adj_list->remove_item(v_item);
@@ -119,8 +121,8 @@ void EnumInducedSubtrees::enumerate()
 
         restore(v);
         induced_subtree.pop_back();
-        in_cand[v->get_id()] = false; 
-        CAND.remove_item(cand_items[v].get()); 
+        in_cand[v_id] = false; 
+        CAND.remove_item(cand_items[v_id].get()); 
     }
 
     if (make_parenthesis) {
@@ -193,13 +195,14 @@ void EnumInducedSubtrees::rec_enumerate()
 
 bool EnumInducedSubtrees::update(const Vertex* v)
 {
-    AdjacentList* v_adj_list = adjcent_lists[v].get();
+    const int v_id = v->get_id(); 
+    AdjacentList* v_adj_list = adjacent_lists[v_id].get();
 
     // Update CAND (remove)
     std::vector<CandItem*> cand_remove; 
     {
-        CandItem* v_cand_item = cand_items[v].get();
-        in_cand[v->get_id()] = false; 
+        CandItem* v_cand_item = cand_items[v_id].get();
+        in_cand[v_id] = false; 
         CAND.remove_item(v_cand_item);
         cand_remove.push_back(v_cand_item); 
     }
@@ -208,10 +211,11 @@ bool EnumInducedSubtrees::update(const Vertex* v)
             u_item != v_adj_list->larger_head_tail.get();
             u_item = u_item->get_next()) {
         const Vertex* u = u_item->get_vertex();
-        if (in_cand[u->get_id()] == true) {
-            in_cand[u->get_id()] = false; 
-            cand_remove.push_back(cand_items[u].get()); 
-            CAND.remove_item(cand_items[u].get()); 
+        const int u_id = u->get_id(); 
+        if (in_cand[u_id] == true) {
+            in_cand[u_id] = false; 
+            cand_remove.push_back(cand_items[u_id].get()); 
+            CAND.remove_item(cand_items[u_id].get()); 
         }
     }
     cand_remove_history.push(cand_remove);
@@ -226,15 +230,16 @@ bool EnumInducedSubtrees::update(const Vertex* v)
          u_item != v_adj_list->smaller_head_tail.get();) {
         auto u_item_next = u_item->get_next(); 
 
-        const Vertex* u  = u_item->get_vertex();
-        if (added_candidate[u->get_id()] == true) {
+        const Vertex* u = u_item->get_vertex();
+        const int u_id  = u->get_id();
+        if (added_candidate[u_id] == true) {
             std::cerr << "ERR! CAN NOT ADD u!" <<std::endl; 
             exit(1);
         }
-        added_candidate[u->get_id()] = true;
-        in_cand[u->get_id()]         = true;
+        added_candidate[u_id] = true;
+        in_cand[u_id]         = true;
         addible_vertices.push_back(u);
-        addible_cand_items.push_back(cand_items[u].get());
+        addible_cand_items.push_back(cand_items[u_id].get());
 
         adj_ops.push_back(
             std::make_tuple(u_item, u_item->get_prev(), u_item->get_next()));
@@ -251,11 +256,12 @@ bool EnumInducedSubtrees::update(const Vertex* v)
             u_item != v_adj_list->larger_head_tail.get();
             u_item = u_item->get_next()) {
         const Vertex* u = u_item->get_vertex();
-        if (added_candidate[u->get_id()] == false) {
-            added_candidate[u->get_id()] = true;
-            in_cand[u->get_id()]         = true;
+        const int u_id  = u->get_id();
+        if (added_candidate[u_id] == false) {
+            added_candidate[u_id] = true;
+            in_cand[u_id]         = true;
             addible_vertices.push_back(u);
-            addible_cand_items.push_back(cand_items[u].get());
+            addible_cand_items.push_back(cand_items[u_id].get());
         }
     }
     cand_add_history.push(addible_cand_items);
@@ -268,13 +274,13 @@ bool EnumInducedSubtrees::update(const Vertex* v)
     std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*, AdjItem*>>
         adjadj_ops;
     for (const auto& u : addible_vertices) {
-        AdjacentList* u_adj_list = adjcent_lists[u].get();
+        AdjacentList* u_adj_list = adjacent_lists[u->get_id()].get();
         for (AdjItem* w_item = u_adj_list->get_larger_head();
              w_item != u_adj_list->larger_head_tail.get();
              w_item = w_item->get_next()) {
 
             const Vertex* w          = w_item->get_vertex();
-            AdjacentList* w_adj_list = adjcent_lists[w].get();
+            AdjacentList* w_adj_list = adjacent_lists[w->get_id()].get();
             AdjItem* u_item          = adj_items[w][u].get();
 
             adjadj_ops.push_back(
@@ -297,7 +303,7 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
         auto prev_item  = std::get<2>(adjadj_ops);
         auto next_item  = std::get<3>(adjadj_ops);
 
-        AdjacentList* w_adj_list = adjcent_lists[w].get();
+        AdjacentList* w_adj_list = adjacent_lists[w->get_id()].get();
         AdjItem* u_item          = adj_items[w][u].get();
 
         w_adj_list->remove_item(u_item);
@@ -313,8 +319,9 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
     for (int i = (int)cand_add_history.top().size() - 1; i >= 0; --i) {
         CandItem* u_item      = cand_add_history.top().at(i);
 
-        added_candidate[u_item->get_vertex()->get_id()] = false; 
-        in_cand[u_item->get_vertex()->get_id()] = false; 
+        const int u_id = u_item->get_vertex()->get_id(); 
+        added_candidate[u_id] = false;
+        in_cand[u_id]         = false;
 
         CAND.remove_item(u_item);
 
@@ -330,7 +337,7 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
         auto next_item     = std::get<2>(adj_ops.at(i));
 
         added_candidate[u->get_id()] = false; 
-        adjcent_lists[v]->remove_item(u_item);
+        adjacent_lists[v->get_id()]->remove_item(u_item);
 
         prev_item->set_next(u_item);
         next_item->set_prev(u_item);
@@ -360,9 +367,10 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
 bool EnumInducedSubtrees::candidate_no_add(const Vertex * v)
 {
 
+    const int v_id = v->get_id(); 
     {
-        in_cand[v->get_id()] = false; 
-        CandItem* cand_item_v = cand_items[v].get(); 
+        in_cand[v_id] = false; 
+        CandItem* cand_item_v = cand_items[v_id].get(); 
         CAND.remove_item(cand_item_v);
         no_cand_cand_history.push(cand_item_v);
     }
@@ -391,7 +399,7 @@ void EnumInducedSubtrees::show_graph()
 {
     // std::cout << "SHOW GRAPH" << std::endl;
     // for (const auto& v : g->get_sorted_vector()) {
-    // adjcent_lists[g->get_vertex(v)]->show();
+    // adjacent_lists[g->get_vertex(v)]->show();
     // }
     g->show();
     std::cout << std::endl;
