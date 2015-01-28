@@ -28,14 +28,14 @@ class EnumInducedSubtrees {
     std::unordered_map<
         const Vertex*,
         std::unordered_map<const Vertex*, std::unique_ptr<AdjItem>>> adj_items;
+
     std::unordered_map<const Vertex*, std::unique_ptr<CandItem>> cand_items;
     std::unordered_map<const Vertex*, std::unique_ptr<AdjacentList>>
         adjcent_lists;
 
 
-    // std::unique_ptr<bool[]> added_candidate;
-    std::unordered_map<const Vertex*, bool> added_candidate;
-    std::unordered_map<const Vertex*, bool> in_cand;
+    std::unique_ptr<bool[]> added_candidate;
+    std::unique_ptr<bool[]> in_cand;
 
 
     std::stack<std::vector<CandItem*>> cand_add_history;
