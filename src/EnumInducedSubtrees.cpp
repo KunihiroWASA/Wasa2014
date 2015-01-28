@@ -103,6 +103,9 @@ void EnumInducedSubtrees::enumerate()
     if (output_search_tree_parenthesis) {
         std::cout << '(';
     }
+
+    output_something = output_search_tree_parenthesis or
+        output_induced_subtree_entire or output_induced_subtree_differential;
     for (const auto& v_id : g->get_sorted_vector()) {
 
         const Vertex* v = g->get_vertex(v_id);

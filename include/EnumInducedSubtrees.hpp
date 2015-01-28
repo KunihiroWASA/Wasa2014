@@ -29,8 +29,6 @@ class EnumInducedSubtrees {
     std::unique_ptr<std::unique_ptr<std::unique_ptr<AdjItem>[]>[]> adj_items;
     std::unique_ptr<std::unique_ptr<CandItem>[]> cand_items;
     std::unique_ptr<std::unique_ptr<AdjacentList>[]> adjacent_lists;
-
-
     std::unique_ptr<bool[]> added_candidate;
     std::unique_ptr<bool[]> in_cand;
 
@@ -47,8 +45,6 @@ class EnumInducedSubtrees {
     std::stack<std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*,
                                       AdjItem*>>> no_cand_adj_history;
     std::stack<CandItem*> no_cand_cand_history;
-
-    std::string parenthesis;
 
    public:
     EnumInducedSubtrees();
