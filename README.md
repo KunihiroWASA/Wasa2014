@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Enumeration program for all induced subtrees in a given graph. 
 * See paper: [arXiv/abs/1407.6140](http://arxiv.org/abs/1407.6140)
 * Author:    Kunihiro Wasa
@@ -23,5 +24,7 @@
 10: 5 7 8 `
 
 Each line represents the adjacent list for a vertex `v`. 
+
 `v: u[1] u[2] ... `
+
 , where `u[i]` is the i-th adjacent of `v`. 
