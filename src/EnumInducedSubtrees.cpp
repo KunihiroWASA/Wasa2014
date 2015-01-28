@@ -34,14 +34,19 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
 
     // init adjacent lists
     adjacent_lists.reset(new std::unique_ptr<AdjacentList>[g->get_sorted_vector().size()]); 
+    adj_items.reset(new std::unique_ptr<std::unique_ptr<AdjItem>[]>[g->get_sorted_vector().size()]); 
+    for (size_t i = 0; i < g->get_sorted_vector().size(); ++i) {
+        adj_items[i].reset(new std::unique_ptr<AdjItem>[g->get_sorted_vector().size()]); 
+    }
     for (const auto& v_id : g->get_sorted_vector()) {
         const Vertex* v = g->get_vertex(v_id);
         std::unique_ptr<AdjacentList> v_alist(new AdjacentList(v));
         adjacent_lists[v_id] = std::move(v_alist);
         for (const Vertex* u : v->get_adjacents()) {
             std::unique_ptr<AdjItem> v_u(new AdjItem(u));
+            const int u_id = u->get_id(); 
             AdjItem* v_u_p = v_u.get();
-            adj_items[v][u] = std::move(v_u);
+            adj_items[v_id][u_id] = std::move(v_u);
 
             if (v->get_degeneracy_id() < u->get_degeneracy_id()) {
                 adjacent_lists[v_id]->push_back_to_larger(v_u_p);
@@ -78,8 +83,9 @@ void EnumInducedSubtrees::set_head(const Vertex * v)
             u_item = u_item->get_next()) {
 
         const Vertex* u          = u_item->get_vertex();
-        AdjacentList* u_adj_list = adjacent_lists[u->get_id()].get();
-        AdjItem* v_item          = adj_items[u][v].get();
+        const int u_id           = u->get_id();
+        AdjacentList* u_adj_list = adjacent_lists[u_id].get();
+        AdjItem* v_item          = adj_items[u_id][v_id].get();
 
         u_adj_list->remove_item(v_item);
         u_adj_list->push_back_to_smaller_avoiding(v_item);
@@ -309,8 +315,10 @@ bool EnumInducedSubtrees::update(const Vertex* v)
              w_item = w_item->get_next()) {
 
             const Vertex* w          = w_item->get_vertex();
-            AdjacentList* w_adj_list = adjacent_lists[w->get_id()].get();
-            AdjItem* u_item          = adj_items[w][u].get();
+            const int w_id           = w->get_id();
+            const int u_id           = u->get_id();
+            AdjacentList* w_adj_list = adjacent_lists[w_id].get();
+            AdjItem* u_item          = adj_items[w_id][u_id].get();
 
             adjadj_ops.push_back(
                 std::make_tuple(w, u, u_item->get_prev(), u_item->get_next()));
@@ -332,8 +340,10 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
         auto prev_item  = std::get<2>(adjadj_ops);
         auto next_item  = std::get<3>(adjadj_ops);
 
-        AdjacentList* w_adj_list = adjacent_lists[w->get_id()].get();
-        AdjItem* u_item          = adj_items[w][u].get();
+        const int w_id           = w->get_id();
+        const int u_id           = u->get_id();
+        AdjacentList* w_adj_list = adjacent_lists[w_id].get();
+        AdjItem* u_item          = adj_items[w_id][u_id].get();
 
         w_adj_list->remove_item(u_item);
 

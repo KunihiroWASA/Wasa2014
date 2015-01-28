@@ -20,7 +20,7 @@ int main(int argc, char const* argv[])
         ("help,h",                "display help (this page) ")
         ("file,f",                boost::program_options::value<std::string>(), "file path")
         ("output_parenthesis,p",  "output the parenthesis of the search tree")
-        ("output_entire,e",      "output all induced subtrees (entire)")
+        ("output_entire,e",       "output all induced subtrees (entire)")
         ("output_differential,d", "output all induced subtrees (differential)");
     boost::program_options::variables_map vm;
     try {

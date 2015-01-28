@@ -26,9 +26,10 @@ class EnumInducedSubtrees {
 
     std::vector<const Vertex*> induced_subtree;
 
-    std::unordered_map<
-        const Vertex*,
-        std::unordered_map<const Vertex*, std::unique_ptr<AdjItem>>> adj_items;
+    std::unique_ptr< std::unique_ptr<std::unique_ptr<AdjItem>[]>[] > adj_items;
+    // std::unordered_map<
+        // const Vertex*,
+        // std::unordered_map<const Vertex*, std::unique_ptr<AdjItem>>> adj_items;
 
     std::unique_ptr<std::unique_ptr<CandItem>[]> cand_items;
     std::unique_ptr<std::unique_ptr<AdjacentList>[]> adjacent_lists;
