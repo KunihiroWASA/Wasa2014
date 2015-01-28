@@ -5,8 +5,8 @@
 int Vertex::cnt = 0;
 
 Vertex::Vertex(int __id)
-    : u_id(cnt++),
-      id(__id),
+    : label(__id),
+      id(cnt++),
       degeneracy_id(-1),
       degree(0),
       added_candidte_set(false){};
@@ -15,6 +15,11 @@ int Vertex::get_id() const
 {
     return id;
 }
+int Vertex::get_label() const
+{
+    return label;
+}
+
 
 void Vertex::add_adjacents(Vertex *v)
 {

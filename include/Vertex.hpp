@@ -11,7 +11,7 @@ class AdjItem;
 
 class Vertex {
     static int cnt; 
-    const int u_id; 
+    const int label; 
     const int id;
     int degeneracy_id;
     int degree;
@@ -21,6 +21,7 @@ class Vertex {
    public:
     Vertex(int __id); 
     int get_id() const;
+    int get_label() const;
     void add_adjacents(Vertex *v);
     int get_degree();
     void set_degeneracy_id(int __d_id);
