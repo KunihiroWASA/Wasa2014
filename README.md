@@ -7,6 +7,7 @@
 * -h [ --help ]                 display help (this page) 
 * -f [ --file ] arg             file path
 * -p [ --output_parenthesis ]   output the parenthesis of the search tree
+* -n [ --output_newick ]        output the newick format of the search tree
 * -e [ --output_entire ]        output all induced subtrees (entire)
 * -d [ --output_differential ]  output all induced subtrees (differential)
 

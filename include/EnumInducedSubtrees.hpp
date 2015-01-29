@@ -16,10 +16,12 @@ class EnumInducedSubtrees {
     Graph* g;
     CandidateList CAND;
     int rec_depth;
+    char comma; 
     bool output_search_tree_parenthesis;
     bool output_induced_subtree_differential;
     bool output_induced_subtree_entire;
     bool output_something;
+    bool output_newick;
     uint64_t induced_subtrees_num;
 
     std::unique_ptr<const Vertex* []> induced_subtree;
@@ -67,5 +69,6 @@ class EnumInducedSubtrees {
     void set_output_search_tree_parenthesis(bool b);
     void set_output_induced_subtree_differential(bool b);
     void set_output_induced_subtree_entire(bool b);
+    void set_output_newick(bool b); 
 };
 #endif

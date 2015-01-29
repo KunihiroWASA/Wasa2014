@@ -5,6 +5,7 @@ EnumInducedSubtrees::EnumInducedSubtrees()
       output_induced_subtree_differential(false),
       output_induced_subtree_entire(false),
       output_something(false),
+      output_newick(false),
       induced_subtrees_num(0){};
 
 void EnumInducedSubtrees::set_output_search_tree_parenthesis(bool b)
@@ -24,6 +25,16 @@ void EnumInducedSubtrees::set_output_induced_subtree_entire(bool b)
     output_induced_subtree_entire = b;
     output_something = true;
 }
+
+void EnumInducedSubtrees::set_output_newick(bool b)
+{
+    output_newick = b;
+    if (b) {
+        output_search_tree_parenthesis = true;
+    }
+    output_something = true;
+}
+
 
 void EnumInducedSubtrees::init_graph(Graph* __g)
 {
@@ -136,6 +147,11 @@ void EnumInducedSubtrees::enumerate()
     induced_subtrees_num = 0;
     induced_subtree_size = 0;
     if (output_search_tree_parenthesis) {
+        if (output_newick) {
+            comma = ','; 
+        } else {
+            comma = '\0'; 
+        }
         std::cout << "(";
     }
 
@@ -164,7 +180,7 @@ void EnumInducedSubtrees::enumerate()
         }
 
         if (output_search_tree_parenthesis) {
-            std::cout << "),";
+            std::cout << ")" << comma << "";
         }
         if (output_induced_subtree_differential) {
             std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
@@ -178,7 +194,11 @@ void EnumInducedSubtrees::enumerate()
     }
 
     if (output_search_tree_parenthesis) {
-        std::cout << ");" << std::endl;
+        std::cout << ")"; 
+        if (output_newick) {
+            std::cout << ";"; 
+        }
+        std::cout << std::endl;
     }
     std::cout << "DONE." << std::endl;
     std::cout << "SUBTREE NUM.: " << induced_subtrees_num << std::endl;
@@ -213,7 +233,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
         ++induced_subtrees_num;
 
         if (output_search_tree_parenthesis) {
-            std::cout << "(,)";
+            std::cout << "(" << comma << ")";
         }
         if (output_induced_subtree_entire) {
             show_induced_subtree();
@@ -233,7 +253,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
     rec_enumerate_output();
 
     if (output_search_tree_parenthesis) {
-        std::cout << "),";
+        std::cout << ")" << comma;
     }
 
     restore_candidate_no_add();
@@ -280,8 +300,7 @@ bool EnumInducedSubtrees::update(const Vertex* v)
         CAND.remove_item(v_cand_item);
         cand_remove_history[rec_depth][cand_remove_count_history[rec_depth]++] =
             v_cand_item;
-    }
-
+    } 
     for (AdjItem* u_item = v_adj_list->get_larger_head();
          u_item != v_adj_list->larger_head_tail.get();
          u_item = u_item->get_next()) {
