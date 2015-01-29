@@ -274,8 +274,8 @@ void EnumInducedSubtrees::rec_enumerate_output()
         std::cout << "(";
     }
 
-    std::cout << v->get_label() << " "; 
     if (output_induced_subtree_differential) {
+        std::cout << v->get_label() << " "; 
         if (induced_subtree_size % 2 == 1) {
             std::cout << std::endl; 
             if (output_induced_subtree_entire) {
@@ -295,8 +295,8 @@ void EnumInducedSubtrees::rec_enumerate_output()
             }
             std::cout << "* "; 
         }
+        std::cout << "-" << v->get_label() << " "; 
     }
-    std::cout << "-" << v->get_label() << " "; 
 
     if (output_search_tree_parenthesis) {
         std::cout << ")";
