@@ -17,17 +17,16 @@ void CandidateList::set_head(CandItem* v_item)
     }
 }
 
-void CandidateList::merge(std::vector<CandItem*>& addible_cand_items)
+void CandidateList::merge(CandItem** addible_cand_items, int addible_cand_items_size)
 {
     auto head = get_head();
 
-    size_t i = 0;
-    size_t aci_size = addible_cand_items.size();
+    int i = 0;
     CandItem* c = get_head();
     CandItem* ht_p = head_tail.get();
 
-    while (c != ht_p and i < aci_size) {
-        CandItem* d = addible_cand_items.at(i);
+    while (c != ht_p and i < addible_cand_items_size) {
+        CandItem* d = addible_cand_items[i]; 
 
         if ((d->get_vertex())->get_degeneracy_id() <
             c->get_vertex()->get_degeneracy_id()) {
@@ -43,10 +42,10 @@ void CandidateList::merge(std::vector<CandItem*>& addible_cand_items)
             c = c->get_next();
         }
     }
-    for (; i < aci_size; ++i) {
+    for (; i < addible_cand_items_size; ++i) {
         CandItem* tail = get_tail();
         CandItem* c = tail->get_next();
-        CandItem* d = addible_cand_items.at(i);
+        CandItem* d = addible_cand_items[i];
 
         d->set_next(c);
         d->set_prev(tail);

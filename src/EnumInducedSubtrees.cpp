@@ -75,7 +75,11 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
     }
 
     // init stack (array)
-    cand_add_history.reset(new std::vector<CandItem*>[vertex_num]);
+    cand_add_history.reset(new std::unique_ptr<CandItem* []>[vertex_num]);
+    cand_add_count_history.reset(new int[vertex_num]);
+    for (size_t i = 0; i < vertex_num; i++) {
+        cand_add_history[i].reset(new CandItem* [max_degree]);
+    }
 
     cand_remove_history.reset(new std::unique_ptr<CandItem* []>[vertex_num]);
     cand_remove_count_history.reset(new int[vertex_num]);
@@ -296,7 +300,7 @@ bool EnumInducedSubtrees::update(const Vertex* v)
     // Update CAND (add) and smaller adjacents move to avoiding set
     std::vector<const Vertex*> addible_vertices;
 
-    cand_add_history[rec_depth].clear();
+    cand_add_count_history[rec_depth]  = 0;
     adj_count_history[rec_depth] = 0;
 
     for (AdjItem* u_item = v_adj_list->get_smaller_head();
@@ -312,7 +316,8 @@ bool EnumInducedSubtrees::update(const Vertex* v)
         added_candidate[u_id] = true;
         in_cand[u_id] = true;
         addible_vertices.push_back(u);
-        cand_add_history[rec_depth].push_back(cand_items[u_id].get());
+        cand_add_history[rec_depth][cand_add_count_history[rec_depth]++] 
+            = cand_items[u_id].get();
 
         adj_history[rec_depth][adj_count_history[rec_depth]++] =
             std::make_tuple(u_item, u_item->get_prev(), u_item->get_next());
@@ -332,11 +337,12 @@ bool EnumInducedSubtrees::update(const Vertex* v)
             added_candidate[u_id] = true;
             in_cand[u_id] = true;
             addible_vertices.push_back(u);
-            cand_add_history[rec_depth].push_back(cand_items[u_id].get());
+            cand_add_history[rec_depth][cand_add_count_history[rec_depth]++] 
+                = cand_items[u_id].get();
         }
     }
 
-    CAND.merge(cand_add_history[rec_depth]);
+    CAND.merge(cand_add_history[rec_depth].get(), cand_add_count_history[rec_depth]);
     // END Update CAND (add) and smaller adjacents move to avoiding set
 
     // Update larger adjacents of added adjacents of v
@@ -383,8 +389,8 @@ bool EnumInducedSubtrees::restore(const Vertex* v)
         u_item->set_next(next_item);
     }
 
-    for (int i = (int)cand_add_history[rec_depth].size() - 1; i >= 0; --i) {
-        CandItem* u_item = cand_add_history[rec_depth].at(i);
+    for (int i = (int)cand_add_count_history[rec_depth] - 1; i >= 0; --i) {
+        CandItem* u_item = cand_add_history[rec_depth][i];
 
         const int u_id = u_item->get_vertex()->get_id();
         added_candidate[u_id] = false;

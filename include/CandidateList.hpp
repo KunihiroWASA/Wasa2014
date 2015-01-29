@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <memory>
-#include <vector>
 
 
 class CandItem {
@@ -36,7 +35,7 @@ class CandidateList {
     inline CandItem* get_head() { return head_tail->get_next(); };
     inline CandItem* get_tail() { return head_tail->get_prev(); };
 
-    void merge(std::vector<CandItem*>& addible_cand_items);
+    void merge(CandItem** addible_cand_items, int addible_cand_items_size);
 
     void remove_item(CandItem* c_item);
 

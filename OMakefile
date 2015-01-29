@@ -3,7 +3,7 @@ TARGET = enum_induced_subtree
 CC     = g++ 
 SRCDIR = ./src
 
-CXXFLAGS += -g -Wextra -Ofast -std=c++11 -I./include 
+CXXFLAGS += -g -Wextra -O3 -std=c++11 -I./include 
 LDFLAGS += -L./src -lboost_program_options
 LIBS     += $(SRCDIR)/libeis
 .DEFAULT: $(CXXProgram $(TARGET), $(SRCS))

@@ -111,13 +111,14 @@ void Graph::sort_vertices()
 void Graph::show()
 {
     std::cout << "SHOW GRAPH" << std::endl;
-    std::cout << std::setw(4); 
+    std::cout << std::setw(3); 
     std::cout << "v" << ": Adjacents of v" << std::endl; 
 
     for (const auto& v_id : sorted_vector) {
-        std::cout << std::setw(4); 
+        std::cout << std::setw(3); 
         std::cout << vertices[v_id]->get_label() << ": ";
         for (const auto& u : vertices[v_id]->get_adjacents()) {
+            std::cout << std::setw(3); 
             std::cout << u->get_label() << " ";
         }
         std::cout << std::endl;
