@@ -20,6 +20,7 @@ int main(int argc, char const* argv[])
         ("file,f",                boost::program_options::value<std::string>(), "file path")
         ("output_parenthesis,p",  "output the parenthesis of the search tree")
         ("output_newick,n",       "output the newick format of the search tree")
+        ("output_both,b",         "output all induced subtrees (entire and diff)")
         ("output_entire,e",       "output all induced subtrees (entire)")
         ("output_differential,d", "output all induced subtrees (differential)");
     boost::program_options::variables_map vm;
@@ -75,6 +76,11 @@ int main(int argc, char const* argv[])
         eis.set_output_induced_subtree_differential(true); 
     } else {
         eis.set_output_induced_subtree_differential(false); 
+    }
+
+    if (vm.count("output_both")) {
+        eis.set_output_induced_subtree_entire(true); 
+        eis.set_output_induced_subtree_differential(true); 
     }
 
     if (vm.count("output_parenthesis")) {

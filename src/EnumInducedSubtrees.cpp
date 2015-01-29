@@ -171,8 +171,12 @@ void EnumInducedSubtrees::enumerate()
         update(v);
 
         if (output_induced_subtree_differential) {
-            std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
-                      << v->get_label() << std::endl;
+            std::cout << "* " << v->get_label() << " "; 
+        }
+        if (output_induced_subtree_entire) {
+            std::cout << std::endl; 
+            show_induced_subtree(); 
+            std::cout << "* "; 
         }
         if (output_search_tree_parenthesis) {
             std::cout << "(";
@@ -184,12 +188,11 @@ void EnumInducedSubtrees::enumerate()
             rec_enumerate();
         }
 
+        if (output_induced_subtree_differential) {
+                std::cout << std::endl; 
+        }
         if (output_search_tree_parenthesis) {
             std::cout << ")" << comma << "";
-        }
-        if (output_induced_subtree_differential) {
-            std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
-                      << v->get_label() << std::endl;
         }
 
         restore(v);
@@ -240,7 +243,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
         if (output_search_tree_parenthesis) {
             std::cout << "(" << comma << ")";
         }
-        if (output_induced_subtree_entire) {
+        if (output_induced_subtree_entire and !output_induced_subtree_differential) {
             show_induced_subtree();
         }
         return;
@@ -266,22 +269,34 @@ void EnumInducedSubtrees::rec_enumerate_output()
     ++induced_subtree_size;
     induced_subtree[induced_subtree_size - 1] = v;
     update(v);
-
+    
     if (output_search_tree_parenthesis) {
         std::cout << "(";
     }
 
+    std::cout << v->get_label() << " "; 
     if (output_induced_subtree_differential) {
-        std::cout << std::setw(rec_depth + 3) << std::setfill(' ')
-                  << v->get_label() << std::endl;
+        if (induced_subtree_size % 2 == 1) {
+            std::cout << std::endl; 
+            if (output_induced_subtree_entire) {
+                show_induced_subtree();
+            }
+            std::cout << "* "; 
+        }
     }
 
     rec_enumerate_output();
 
     if (output_induced_subtree_differential) {
-        std::cout << std::setw(rec_depth + 2) << std::setfill(' ') << '-'
-                  << v->get_label() << std::endl;
+        if (induced_subtree_size % 2 == 0) {
+            std::cout << std::endl; 
+            if (output_induced_subtree_entire) {
+                show_induced_subtree();
+            }
+            std::cout << "* "; 
+        }
     }
+    std::cout << "-" << v->get_label() << " "; 
 
     if (output_search_tree_parenthesis) {
         std::cout << ")";
