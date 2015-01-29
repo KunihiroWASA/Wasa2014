@@ -49,6 +49,7 @@ class EnumInducedSubtrees {
         std::tuple<const Vertex*, const Vertex*, AdjItem*, AdjItem*> []> []>
         adjadj_history;
     std::unique_ptr<int[]> adjadj_count_history;
+    std::unique_ptr<const Vertex*[]> addible_vertices; 
 
     std::unique_ptr<CandItem* []> no_cand_cand_history;
 

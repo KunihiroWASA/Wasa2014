@@ -117,6 +117,8 @@ void EnumInducedSubtrees::init_graph(Graph* __g)
 
     no_cand_cand_history.reset(new CandItem* [vertex_num]);
 
+    addible_vertices.reset(new const Vertex*[max_degree + max_degree * degeneracy]);
+
     // init subtree_size
     induced_subtree.reset(new const Vertex* [vertex_num]);
 }
@@ -320,7 +322,6 @@ bool EnumInducedSubtrees::update(const Vertex* v)
     // END Update CAND (remove)
 
     // Update CAND (add) and smaller adjacents move to avoiding set
-    std::unique_ptr<const Vertex*[]> addible_vertices(new const Vertex*[max_degree + max_degree * degeneracy]);
     
     int addible_vertices_count = -1; 
 
