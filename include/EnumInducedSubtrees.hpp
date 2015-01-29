@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <stack>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -24,27 +23,29 @@ class EnumInducedSubtrees {
     bool output_something; 
     uint64_t induced_subtrees_num; 
 
-    std::vector<const Vertex*> induced_subtree;
+    std::unique_ptr<const Vertex*[]> induced_subtree;
+    int induced_subtree_size; 
 
-    std::unique_ptr<std::unique_ptr<std::unique_ptr<AdjItem>[]>[]> adj_items;
-    std::unique_ptr<std::unique_ptr<CandItem>[]> cand_items;
-    std::unique_ptr<std::unique_ptr<AdjacentList>[]> adjacent_lists;
+    std::unique_ptr<std::unique_ptr<std::unique_ptr<AdjItem> []> []> adj_items;
+    std::unique_ptr<std::unique_ptr<CandItem> []> cand_items;
+    std::unique_ptr<std::unique_ptr<AdjacentList> []> adjacent_lists;
     std::unique_ptr<bool[]> added_candidate;
     std::unique_ptr<bool[]> in_cand;
 
+    std::unique_ptr<std::vector<CandItem*> []> cand_add_history;
+    std::unique_ptr<std::unique_ptr<CandItem* []> []> cand_remove_history;
+    std::unique_ptr<int[]> cand_remove_count_history;
 
-    std::stack<std::vector<CandItem*>> cand_add_history;
-    std::stack<std::vector<CandItem*>> cand_remove_history;
-    std::stack<CandItem*> cand_head_history;
-    std::stack<std::vector<std::tuple<AdjItem*, AdjItem*, AdjItem*>>>
+
+    std::unique_ptr<std::unique_ptr<std::tuple<AdjItem*, AdjItem*, AdjItem*>[]> []>
         adj_history;
+    std::unique_ptr<int[]> adj_count_history;
 
-    std::stack<std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*,
-                                      AdjItem*>>> adjadj_history;
+    std::unique_ptr<std::unique_ptr<std::tuple<
+        const Vertex*, const Vertex*, AdjItem*, AdjItem*>[]> []> adjadj_history;
+    std::unique_ptr<int[]> adjadj_count_history;
 
-    std::stack<std::vector<std::tuple<const Vertex*, const Vertex*, AdjItem*,
-                                      AdjItem*>>> no_cand_adj_history;
-    std::stack<CandItem*> no_cand_cand_history;
+    std::unique_ptr<CandItem* []> no_cand_cand_history;
 
    public:
     EnumInducedSubtrees();

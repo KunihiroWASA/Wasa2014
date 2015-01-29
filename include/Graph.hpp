@@ -30,6 +30,7 @@ class Graph {
     inline int get_degeneracy() { return degeneracy; };
     inline size_t get_number_of_edges() { return edges.size(); }; 
     inline size_t get_number_of_vertices() { return vertices.size(); }; 
+    inline int get_max_degree() {return max_degree;}; 
 
 
     void sort_by_degeneracy();
