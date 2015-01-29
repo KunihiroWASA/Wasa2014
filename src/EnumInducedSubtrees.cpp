@@ -101,7 +101,7 @@ void EnumInducedSubtrees::enumerate()
     rec_depth = 0;
     induced_subtrees_num = 0;
     if (output_search_tree_parenthesis) {
-        std::cout << '(';
+        std::cout << "(";
     }
 
     output_something = output_search_tree_parenthesis or
@@ -119,7 +119,7 @@ void EnumInducedSubtrees::enumerate()
             ++rec_depth;
         }
         if (output_search_tree_parenthesis) {
-            std::cout << '(';
+            std::cout << "(";
         }
 
         if (output_something) {
@@ -129,7 +129,7 @@ void EnumInducedSubtrees::enumerate()
         }
 
         if (output_search_tree_parenthesis) {
-            std::cout << ')';
+            std::cout << "),";
         }
         if (output_induced_subtree_differential) {
             --rec_depth;
@@ -144,7 +144,7 @@ void EnumInducedSubtrees::enumerate()
     }
 
     if (output_search_tree_parenthesis) {
-        std::cout << ')' << std::endl;
+        std::cout << ");" << std::endl;
     }
     std::cout << "DONE." << std::endl;
     std::cout << "SUBTREE NUM.: " << induced_subtrees_num << std::endl;
@@ -180,6 +180,9 @@ void EnumInducedSubtrees::rec_enumerate_output()
     if (CAND.empty()) {
         ++induced_subtrees_num;
 
+        if (output_search_tree_parenthesis) {
+            std::cout << "(,)";
+        }
         if (output_induced_subtree_entire) {
             show_induced_subtree();
         }
@@ -189,7 +192,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
     candidate_no_add(v);
 
     if (output_search_tree_parenthesis) {
-        std::cout << '(';
+        std::cout << "(";
     }
     if (output_induced_subtree_differential) {
         ++rec_depth;
@@ -198,7 +201,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
     rec_enumerate_output();
 
     if (output_search_tree_parenthesis) {
-        std::cout << ')';
+        std::cout << "),";
     }
 
     restore_candidate_no_add();
@@ -207,7 +210,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
     update(v);
 
     if (output_search_tree_parenthesis) {
-        std::cout << '(';
+        std::cout << "(";
     }
 
     if (output_induced_subtree_differential) {
@@ -224,7 +227,7 @@ void EnumInducedSubtrees::rec_enumerate_output()
     }
 
     if (output_search_tree_parenthesis) {
-        std::cout << ')';
+        std::cout << ")";
     }
 
     restore(v);
