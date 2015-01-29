@@ -1,7 +1,7 @@
 SRCS = Vertex Graph CandidateList AdjacentList EnumInducedSubtrees
 TARGET = libeis
 
-CXXFLAGS += -g -Wextra -O3 -std=c++11 -I../include
+CXXFLAGS += -g -Wextra -Ofast -std=c++11 -I../include
 
 
 .DEFAULT: $(StaticCXXLibrary $(TARGET), $(SRCS))

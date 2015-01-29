@@ -8,6 +8,7 @@ main.*
 !main.cpp
 *.o
 *.a
-hoge
+hoge*
 *un\~
 depend.inc
+gmon.out

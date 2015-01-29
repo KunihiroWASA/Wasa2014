@@ -26,6 +26,9 @@ class EnumInducedSubtrees {
 
     std::unique_ptr<const Vertex* []> induced_subtree;
     int induced_subtree_size;
+    int vertex_num; 
+    int max_degree; 
+    int degeneracy; 
 
     std::unique_ptr<std::unique_ptr<std::unique_ptr<AdjItem> []> []> adj_items;
     std::unique_ptr<std::unique_ptr<CandItem> []> cand_items;
