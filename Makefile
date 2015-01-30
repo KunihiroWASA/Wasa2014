@@ -14,7 +14,7 @@ objs = \
 # 定義済マクロの再定義
 CXX      = g++
 CXXFLAGS = -Wextra -O3 -std=c++11 -I./include
-LIBS     = -L./src -lboost_program_options
+LIBS     = -L./src
 
 # サフィックスルール適用対象の拡張子の定義
 .SUFFIXES: .cpp .o

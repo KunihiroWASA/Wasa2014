@@ -171,12 +171,15 @@ void EnumInducedSubtrees::enumerate()
         update(v);
 
         if (output_induced_subtree_differential) {
-            std::cout << "* " << v->get_label() << " "; 
-        }
-        if (output_induced_subtree_entire) {
             std::cout << std::endl; 
-            show_induced_subtree(); 
-            std::cout << "* "; 
+            std::cout << "* " << v->get_label() << " "; 
+            std::cout << std::endl; 
+            if (output_induced_subtree_entire) {
+                show_induced_subtree(); 
+            }
+            if (!CAND.empty()) {
+                std::cout << "* "; 
+            }
         }
         if (output_search_tree_parenthesis) {
             std::cout << "(";
@@ -193,6 +196,11 @@ void EnumInducedSubtrees::enumerate()
         }
         if (output_search_tree_parenthesis) {
             std::cout << ")" << comma << "";
+        }
+
+        if (output_induced_subtree_differential) {
+            std::cout << "* -" << v->get_label() << " "; 
+            std::cout << std::endl; 
         }
 
         restore(v);

@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <boost/program_options.hpp>
+#include <unistd.h>
 
 #include "Graph.hpp"
 #include "EnumInducedSubtrees.hpp"
@@ -12,95 +12,81 @@ void make_petersen_graph(Graph* g);
 void make_graph_from_file(Graph * g, std::string& file_path);
 std::vector<std::string> split(const std::string& s, char delim); 
 
-int main(int argc, char const* argv[])
+void show_help(char * ename); 
+
+
+int main(int argc, char * argv[])
 {
-    boost::program_options::options_description opt("Options");
-    opt.add_options()
-        ("help,h",                "display help (this page) ")
-        ("file,f",                boost::program_options::value<std::string>(), "file path")
-        ("output_parenthesis,p",  "output the parenthesis of the search tree")
-        ("output_newick,n",       "output the newick format of the search tree")
-        ("output_both,b",         "output all induced subtrees (entire and diff)")
-        ("output_entire,e",       "output all induced subtrees (entire)")
-        ("output_differential,d", "output all induced subtrees (differential)");
-    boost::program_options::variables_map vm;
-    try {
-        boost::program_options::store(boost::program_options::parse_command_line(argc, argv, opt), vm);
-    } catch(const boost::program_options::error_with_option_name& e) {
-        std::cout << e.what() << std::endl;
-        return 1;
+    int result; 
+    bool show_help_flag                      = false;
+    bool output_search_tree_parenthesis      = false;
+    bool output_induced_subtree_differential = false;
+    bool output_induced_subtree_entire       = false;
+    bool output_newick                       = false;
+    bool file_opt                            = false;
+    bool wrong_options                       = false;
+    std::string file_path; 
+
+    while ((result = getopt(argc, argv, "hpnbedf:")) != -1) {
+        switch (result) {
+            case 'p':
+                output_search_tree_parenthesis = true;
+                break; 
+            case 'n':
+                output_newick = true;
+                break; 
+            case 'b':
+                output_induced_subtree_entire = true;
+                output_induced_subtree_differential = true;
+                break; 
+            case 'e':
+                output_induced_subtree_entire = true;
+                break; 
+            case 'd':
+                output_induced_subtree_differential = true;
+                break; 
+            case 'h':
+                show_help_flag = true;
+                break; 
+            case 'f':
+                file_opt  = true;
+                file_path = optarg;
+                break; 
+            case ':':
+                std::cerr << result << " needs value. " << std::endl; 
+            default:
+                show_help_flag     = true;
+                wrong_options = true; 
+                break; 
+        }
     }
-    boost::program_options::notify(vm);
- 
-    if (vm.count("help") or !vm.count("file")) {
-        std::cout << opt << std::endl;
-        std::cout << "Input file sample (petersen graph) " << std::endl; 
-        std::cout << "1: 2 5 6 " << std::endl; 
-        std::cout << "2: 1 3 7 " << std::endl; 
-        std::cout << "3: 2 4 8 " << std::endl; 
-        std::cout << "4: 3 5 9 " << std::endl; 
-        std::cout << "5: 1 4 10 " << std::endl; 
-        std::cout << "6: 1 8 9 " << std::endl; 
-        std::cout << "7: 2 9 10 " << std::endl; 
-        std::cout << "8: 3 6 10 " << std::endl; 
-        std::cout << "9: 4 6 7 " << std::endl; 
-        std::cout << "10: 5 7 8 " << std::endl; 
-        std::cout << std::endl;
-        std::cout << "Each line represents the adjacent list for a vertex v. " << std::endl; 
-        std::cout << "\tv: u[1] u[2] ... " << std::endl; 
-        std::cout << ", where u[i] is the i-th adjacent of v. " << std::endl; 
-        std::cout << std::endl;
-        std::cout << "================================================================ " << std::endl;
-        std::cout << "Example: " << std::endl; 
-        std::cout << std::endl;
+
+    if (wrong_options or show_help_flag or argc == 1) {
+        show_help(argv[0]); 
+        return 0; 
     }
 
     std::unique_ptr<Graph> g(new Graph());
-
-    if (vm.count("file")) {
-        std::string file_path = vm["file"].as<std::string>(); 
-        make_graph_from_file(g.get(), file_path); 
-    } else {
-        make_petersen_graph(g.get());
-    }
-
     EnumInducedSubtrees eis;
 
-    if (vm.count("output_entire")) {
-        eis.set_output_induced_subtree_entire(true); 
+    // option setting
+    eis.set_output_induced_subtree_entire(output_induced_subtree_entire); 
+    eis.set_output_induced_subtree_differential(output_induced_subtree_differential); 
+    eis.set_output_search_tree_parenthesis(output_search_tree_parenthesis); 
+    eis.set_output_newick(output_newick); 
+
+    if (file_opt) {
+        make_graph_from_file(g.get(), file_path); 
     } else {
-        eis.set_output_induced_subtree_entire(false); 
+        std::cout << "Default graph... " << std::endl; 
+        make_petersen_graph(g.get()); 
     }
 
-    if (vm.count("output_differential")) {
-        eis.set_output_induced_subtree_differential(true); 
-    } else {
-        eis.set_output_induced_subtree_differential(false); 
-    }
-
-    if (vm.count("output_both")) {
-        eis.set_output_induced_subtree_entire(true); 
-        eis.set_output_induced_subtree_differential(true); 
-    }
-
-    if (vm.count("output_parenthesis")) {
-        eis.set_output_search_tree_parenthesis(true); 
-    } else {
-        eis.set_output_search_tree_parenthesis(false); 
-    }
-
-    if (vm.count("output_newick")) {
-        eis.set_output_search_tree_parenthesis(true); 
-        eis.set_output_newick(true); 
-    } else {
-        eis.set_output_newick(false); 
-    }
-
+    // Enumerate!
     eis.init_graph(g.get());
-
     eis.show_graph(); 
-
     eis.enumerate();
+
     return 0;
 }
 
@@ -178,4 +164,36 @@ std::vector<std::string> split(const std::string& s, char delim)
         }
     }
     return elems;
+}
+
+void show_help(char * ename)
+{
+    std::cout << std::endl;
+    std::cout << "Useage: " << ename << " -f filepath -hpnbed" << std::endl; 
+    std::cout << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  -h [ --help ]                 display help (this page) " << std::endl;
+    std::cout << "  -f [ --file ] arg             file path" << std::endl;
+    std::cout << "  -p [ --output_parenthesis ]   output the parenthesis of the search tree" << std::endl;
+    std::cout << "  -n [ --output_newick ]        output the newick format of the search tree" << std::endl;
+    std::cout << "  -b [ --output_both ]          output all induced subtrees (entire and diff)" << std::endl;
+    std::cout << "  -e [ --output_entire ]        output all induced subtrees (entire)" << std::endl;
+    std::cout << "  -d [ --output_differential ]  output all induced subtrees (differential)" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Input file sample (petersen graph) " << std::endl; 
+    std::cout << "1: 2 5 6 " << std::endl; 
+    std::cout << "2: 1 3 7 " << std::endl; 
+    std::cout << "3: 2 4 8 " << std::endl; 
+    std::cout << "4: 3 5 9 " << std::endl; 
+    std::cout << "5: 1 4 10 " << std::endl; 
+    std::cout << "6: 1 8 9 " << std::endl; 
+    std::cout << "7: 2 9 10 " << std::endl; 
+    std::cout << "8: 3 6 10 " << std::endl; 
+    std::cout << "9: 4 6 7 " << std::endl; 
+    std::cout << "10: 5 7 8 " << std::endl; 
+    std::cout << std::endl;
+    std::cout << "Each line represents the adjacent list for a vertex v. " << std::endl; 
+    std::cout << "\tv: u[1] u[2] ... " << std::endl; 
+    std::cout << ", where u[i] is the i-th adjacent of v. " << std::endl; 
+    std::cout << std::endl;
 }
