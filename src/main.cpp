@@ -106,11 +106,9 @@ void make_graph_from_file(Graph * g, std::string& file_path)
     while (getline(ifs, str)) {
         std::vector<std::string> strs = split(str, ':'); 
         int source = atoi(strs[0].c_str()); 
-        int s_id = g->add_vertex(source); 
         std::vector<std::string> strss = split(strs[1], ' '); 
         for (auto& s : strss) {
             int dist = atoi(s.c_str()); 
-            int d_id = g->add_vertex(dist); 
             if (source < dist) {
                 g->add_edge(source, dist);
             }
