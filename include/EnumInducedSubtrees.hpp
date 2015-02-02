@@ -16,7 +16,6 @@ class EnumInducedSubtrees {
     Graph* g;
     CandidateList CAND;
     int rec_depth;
-    char comma; 
     bool output_search_tree_parenthesis;
     bool output_induced_subtree_differential;
     bool output_induced_subtree_entire;
@@ -26,9 +25,9 @@ class EnumInducedSubtrees {
 
     std::unique_ptr<const Vertex* []> induced_subtree;
     int induced_subtree_size;
-    int vertex_num; 
-    int max_degree; 
-    int degeneracy; 
+    int vertex_num;
+    int max_degree;
+    int degeneracy;
 
     std::unique_ptr<std::unique_ptr<std::unique_ptr<AdjItem> []> []> adj_items;
     std::unique_ptr<std::unique_ptr<CandItem> []> cand_items;
@@ -49,7 +48,7 @@ class EnumInducedSubtrees {
         std::tuple<const Vertex*, const Vertex*, AdjItem*, AdjItem*> []> []>
         adjadj_history;
     std::unique_ptr<int[]> adjadj_count_history;
-    std::unique_ptr<const Vertex*[]> addible_vertices; 
+    std::unique_ptr<const Vertex* []> addible_vertices;
 
     std::unique_ptr<CandItem* []> no_cand_cand_history;
 
@@ -73,6 +72,6 @@ class EnumInducedSubtrees {
     void set_output_search_tree_parenthesis(bool b);
     void set_output_induced_subtree_differential(bool b);
     void set_output_induced_subtree_entire(bool b);
-    void set_output_newick(bool b); 
+    void set_output_newick(bool b);
 };
 #endif
